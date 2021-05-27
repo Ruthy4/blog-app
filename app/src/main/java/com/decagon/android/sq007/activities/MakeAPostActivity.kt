@@ -12,11 +12,19 @@ class MakeAPostActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_make_a_post)
 
-        backIv.setOnClickListener{
-            val newPost = findViewById<EditText>(R.id.make_a_postTV).text.toString()
+        //sends the new post to the main Activity
+        post_button.setOnClickListener{
+            val newPost = findViewById<EditText>(R.id.make_a_postET).text.toString()
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("newPost", newPost)
             startActivity(intent)
+            finish()
+        }
+
+        backIv.setOnClickListener{
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
         }
 
     }

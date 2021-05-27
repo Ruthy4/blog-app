@@ -8,12 +8,12 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-interface PostService {
+interface ApiEndPointInterface {
     @GET("/Posts")
     fun getPostsList (): Call<List<PostModel>>
 
     @POST("/Posts")
-    fun addPost(post1: Int, @Body post: PostModel)  : Call<PostModel>
+    fun addPost(@Body post: PostModel)  : Call<PostModel>
 
     @GET("/Posts/{position}/Comments")
     fun getComments(@Path("position")url:Int): Call<List<CommentModel>>

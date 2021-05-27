@@ -3,8 +3,10 @@ package com.decagon.android.sq007.activities
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isEmpty
@@ -16,11 +18,12 @@ import com.decagon.android.sq007.R
 import com.decagon.android.sq007.adapters.PostAdapter
 import com.decagon.android.sq007.model.PostModel
 import com.decagon.android.sq007.repository.Repository
-import com.decagon.android.sq007.services.PostService
+import com.decagon.android.sq007.services.ApiEndPointInterface
 import com.decagon.android.sq007.services.RetrofitClient
 import com.decagon.android.sq007.viewmodels.PostViewModel
 import com.decagon.android.sq007.viewmodels.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_make_a_post.*
 import retrofit2.Retrofit
 import java.util.*
 import kotlin.collections.ArrayList
@@ -31,23 +34,27 @@ class MainActivity : AppCompatActivity(), PostAdapter.OnItemClickListener {
     lateinit var postRecyclerView: RecyclerView
     lateinit var recyclerViewAdapter: PostAdapter
     lateinit var viewModelFactory: ViewModelFactory
-    private val service: PostService
+    private val service: ApiEndPointInterface
 
     init {
         val retrofit: Retrofit = RetrofitClient.instance
-        service = retrofit.create(PostService::class.java)
+        service = retrofit.create(ApiEndPointInterface::class.java)
 
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val repository = Repository
+        val repository = Repository()
         viewModelFactory = ViewModelFactory(repository)
 
 
+        //initialise the viewModel
         viewModel = ViewModelProvider(this, viewModelFactory).get(PostViewModel::class.java)
         postRecyclerView = findViewById(R.id.post_list_recyclerView)
+        postRecyclerView.setHasFixedSize(true)
+        postRecyclerView.layoutManager = LinearLayoutManager(this)
+        postRecyclerView.isNestedScrollingEnabled = false
 
         progressDialog = ProgressDialog(this)
         progressDialog.setTitle("Loading")
@@ -57,13 +64,10 @@ class MainActivity : AppCompatActivity(), PostAdapter.OnItemClickListener {
 
         //observe the list of post from the view model and attach to adapter
         viewModel.post.observe(this, Observer {
-            // get the recycler view, set fixed size and the layout manager
+
             if (it != null) {
-                postRecyclerView.setHasFixedSize(true)
-                postRecyclerView.layoutManager = LinearLayoutManager(this)
                 recyclerViewAdapter = PostAdapter(it, this)
                 postRecyclerView.adapter = recyclerViewAdapter
-                postRecyclerView.isNestedScrollingEnabled = false
                 recyclerViewAdapter.notifyDataSetChanged()
                 progressDialog.dismiss()
             } else {
@@ -77,50 +81,41 @@ class MainActivity : AppCompatActivity(), PostAdapter.OnItemClickListener {
             override fun onQueryTextChange(newText: String): Boolean {
                 if (posts_search_bar.isEmpty()){
                     postRecyclerView.adapter = recyclerViewAdapter
-                    //posts_search_bar.onActionViewCollapsed()
-
                 }
                 else{
                     filter(newText)
                     posts_search_bar.setIconifiedByDefault(true)
                 }
-
                 return false
             }
-
-
-
             override fun onQueryTextSubmit(query: String): Boolean {
-              //  posts_search_bar.clearFocus()
-//                filter(query)
-//               posts_search_bar.onActionViewCollapsed()
-             //   posts_search_bar.setIconifiedByDefault(true)
-
                 return false
             }
-
-
         })
+
+
         //receive the intent passing the new post from the AddPostActivity
         val receiver: Bundle? = intent.extras
         if (receiver != null){
             val newPost = receiver.getString("newPost")
-            val postObject = newPost?.let { PostModel(0,0,"Lagos Today", it) }
+            val postObject = newPost?.let { PostModel(1,0,"New Post", it) }
+
 
             if (postObject != null){
-                viewModel.addPost(0, postObject)
+                viewModel.addPost(postObject)
             }
-            //observe the new postList and implement changes
-            viewModel.postsList.observe(this, Observer {
-                if (it != null) {
-                    postRecyclerView.setHasFixedSize(true)
-                    postRecyclerView.layoutManager = LinearLayoutManager(this)
-                    recyclerViewAdapter = PostAdapter(it, this)
-                    postRecyclerView.adapter = recyclerViewAdapter
-                    postRecyclerView.isNestedScrollingEnabled = false
-                    recyclerViewAdapter.notifyDataSetChanged()
-                }
-            })
+
+            if (newPost!!.isNotEmpty() ) {
+                //observe the new postList and update changes to the adapter
+                viewModel.newPost.observe(this, Observer {
+                    if (it != null) {
+
+                        recyclerViewAdapter.addNewPost(it)
+                        postRecyclerView.adapter = recyclerViewAdapter
+                        recyclerViewAdapter.notifyDataSetChanged()
+                    }
+                })
+            }
         }
 
         //open the activity to make a new post
@@ -130,6 +125,7 @@ class MainActivity : AppCompatActivity(), PostAdapter.OnItemClickListener {
         }
 
     }
+
     //function to search post list by title and attach the filtered list to the adapter
     fun filter (text: String){
         val filteredPost = ArrayList<PostModel>()
@@ -141,9 +137,8 @@ class MainActivity : AppCompatActivity(), PostAdapter.OnItemClickListener {
             recyclerViewAdapter.filteredList(filteredPost)
             Log.i("List","$filteredPost")
         })
-
-
     }
+
 
     //passes the content on the post to the comments activity
     override fun onItemClick(post: PostModel, view: View) {
@@ -157,5 +152,19 @@ class MainActivity : AppCompatActivity(), PostAdapter.OnItemClickListener {
 
             startActivity(intent)
 
+    }
+
+    //override onback pressed to exit
+    private var doubleBackToExitPressedOnce = false
+    override fun onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed()
+            return
+        }
+
+        this.doubleBackToExitPressedOnce = true
+        Toast.makeText(this, "Click one more time to exit application", Toast.LENGTH_SHORT).show()
+
+        Handler().postDelayed(Runnable { doubleBackToExitPressedOnce = false }, 1000)
     }
 }

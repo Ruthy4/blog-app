@@ -10,9 +10,11 @@ import com.decagon.android.sq007.R
 import com.decagon.android.sq007.activities.MainActivity
 import com.decagon.android.sq007.model.PostModel
 
-class PostAdapter(private var recyclerViewPostList: List<PostModel>, private val onClickListener: MainActivity):
+class PostAdapter(private var recyclerViewPostList: MutableList<PostModel>, private val onClickListener: MainActivity):
     RecyclerView.Adapter<PostAdapter.ViewHolder>() {
+
   inner class ViewHolder(view: View): RecyclerView.ViewHolder(view), View.OnClickListener {
+
 
       val userId: TextView = view.findViewById(R.id.user_idTV)
       val id: TextView = view.findViewById(R.id.idTV)
@@ -23,6 +25,7 @@ class PostAdapter(private var recyclerViewPostList: List<PostModel>, private val
           view.setOnClickListener(this)
       }
 
+      //function to respond to click on the recycler item
       override fun onClick(v: View?) {
           val position = adapterPosition
           if (position != RecyclerView.NO_POSITION){
@@ -45,21 +48,28 @@ fun filteredList(filteredPost: MutableList<PostModel>){
         return ViewHolder(view)
     }
 
+    //get list size
     override fun getItemCount(): Int {
        return recyclerViewPostList.size
     }
 
+    //binds the view with the data
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         holder.userId.text = recyclerViewPostList[position].userId.toString()
         holder.id.text = recyclerViewPostList[position].id.toString()
         holder.titleTextView.text = recyclerViewPostList[position].title
         holder.bodyTextView.text = recyclerViewPostList[position].body
-
-
-
     }
 
+
+    //add the new post to the list of posts
+    fun addNewPost(post : PostModel){
+        recyclerViewPostList.add(0, post)
+        notifyItemChanged(0)
+    }
+
+    //interface for the click on recyclerview
     interface OnItemClickListener{
         fun onItemClick(post: PostModel, view: View)
     }

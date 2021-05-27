@@ -18,37 +18,42 @@ class CommentAdapter(/*private var recyclerViewCommentList: List<CommentModel>*/
         val name: TextView = view.findViewById(R.id.name_textView)
         val email: TextView = view.findViewById(R.id.email_textView)
         val bodyTextView: TextView = view.findViewById(R.id.Comment_body_textView)
-
-
     }
+
+
+    //create the viewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.comment_item, parent, false)
-
         return ViewHolder(view)
     }
 
+
+    //get the size of items populating the recycler view
     override fun getItemCount(): Int {
-        Log.d("CommentAdapter", "getItemCount: ${recyclerViewCommentList.size}")
         return recyclerViewCommentList.size
     }
 
+
+    //bind the list with the viewHolders
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
-
         holder.name.text = recyclerViewCommentList[position].name
         holder.email.text = recyclerViewCommentList[position].email
         holder.bodyTextView.text = recyclerViewCommentList[position].body
 
     }
 
+
+    //function to add the new comment to the recyclerViewCommentList
     fun addNewComment(comment : CommentModel){
-        this.recyclerViewCommentList.add(comment)
-        notifyDataSetChanged()
+        recyclerViewCommentList.add(0,comment)
+        notifyItemChanged(0)
     }
 
+
+    //add the list of comment to the comment list
     fun addAllComment(comments: List<CommentModel>){
-        recyclerViewCommentList.clear()
         this.recyclerViewCommentList = comments as MutableList<CommentModel>
+        notifyDataSetChanged()
     }
 
 }

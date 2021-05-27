@@ -22,8 +22,8 @@ object RetrofitClient {
             return firstInstance!!
         }
 
-    val api: PostService by lazy {
-        instance.create(PostService::class.java)
+    val api: ApiEndPointInterface by lazy {
+        instance.create(ApiEndPointInterface::class.java)
     }
 }
 
