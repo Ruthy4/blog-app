@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.decagon.android.sq007.R
-import com.decagon.android.sq007.activities.MainActivity
+import com.decagon.android.sq007.activities.PostActivity
 import com.decagon.android.sq007.model.PostModel
 
-class PostAdapter(private var recyclerViewPostList: MutableList<PostModel>, private val onClickListener: MainActivity):
+class PostAdapter(private var recyclerViewPostList: MutableList<PostModel>, private val onClickListener: PostActivity):
     RecyclerView.Adapter<PostAdapter.ViewHolder>() {
 
   inner class ViewHolder(view: View): RecyclerView.ViewHolder(view), View.OnClickListener {

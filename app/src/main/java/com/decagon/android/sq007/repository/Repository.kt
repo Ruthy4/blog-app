@@ -1,7 +1,6 @@
 package com.decagon.android.sq007.repository
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.decagon.android.sq007.model.CommentModel
 import com.decagon.android.sq007.model.PostModel

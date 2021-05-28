@@ -10,9 +10,9 @@ import com.decagon.android.sq007.R
 import com.decagon.android.sq007.model.CommentModel
 
 
-class CommentAdapter(/*private var recyclerViewCommentList: List<CommentModel>*/):
+class CommentAdapter(private var recyclerViewCommentList: MutableList<CommentModel>):
     RecyclerView.Adapter<CommentAdapter.ViewHolder>() {
-    private var recyclerViewCommentList = mutableListOf<CommentModel>()
+
     inner class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
         val name: TextView = view.findViewById(R.id.name_textView)

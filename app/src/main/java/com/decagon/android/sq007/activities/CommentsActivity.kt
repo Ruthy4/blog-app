@@ -17,7 +17,6 @@ import com.decagon.android.sq007.model.CommentModel
 import com.decagon.android.sq007.repository.Repository
 import com.decagon.android.sq007.services.ApiEndPointInterface
 import com.decagon.android.sq007.services.RetrofitClient
-import com.decagon.android.sq007.util.getCommentsList
 import com.decagon.android.sq007.viewmodels.CommentViewModel
 import com.decagon.android.sq007.viewmodels.CommentViewModelFactory
 import kotlinx.android.synthetic.main.activity_comments.*
@@ -81,7 +80,7 @@ class CommentsActivity : AppCompatActivity() {
 
                commentRecyclerView.setHasFixedSize(true)
                 commentRecyclerView.layoutManager = LinearLayoutManager(this)
-                commentRecyclerViewAdapter = CommentAdapter()
+                commentRecyclerViewAdapter = CommentAdapter(it)
                 commentRecyclerViewAdapter.addAllComment(getCommentsList(it,posId))
                 commentRecyclerView.adapter = commentRecyclerViewAdapter
                 progressDialog.dismiss()
@@ -89,6 +88,7 @@ class CommentsActivity : AppCompatActivity() {
                 Toast.makeText(this, "Check your connection", Toast.LENGTH_SHORT).show()
             }
         })
+
 
 
         //onclick of the comment button, observe the new comment input
@@ -120,7 +120,10 @@ class CommentsActivity : AppCompatActivity() {
     }
 
 
-
+    //get the list of comments and filter it by post id to display comment related to the post
+    private fun getCommentsList (comments: List<CommentModel>, postId: Int): List<CommentModel> {
+        return comments.filter{ it.postId == postId}
+    }
 
 
 

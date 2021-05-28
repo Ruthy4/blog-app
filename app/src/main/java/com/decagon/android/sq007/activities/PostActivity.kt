@@ -22,13 +22,12 @@ import com.decagon.android.sq007.services.ApiEndPointInterface
 import com.decagon.android.sq007.services.RetrofitClient
 import com.decagon.android.sq007.viewmodels.PostViewModel
 import com.decagon.android.sq007.viewmodels.ViewModelFactory
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_make_a_post.*
+import kotlinx.android.synthetic.main.activity_post.*
 import retrofit2.Retrofit
 import java.util.*
 import kotlin.collections.ArrayList
 
-class MainActivity : AppCompatActivity(), PostAdapter.OnItemClickListener {
+class PostActivity : AppCompatActivity(), PostAdapter.OnItemClickListener {
     lateinit var progressDialog : ProgressDialog
     lateinit var viewModel:PostViewModel
     lateinit var postRecyclerView: RecyclerView
@@ -43,7 +42,7 @@ class MainActivity : AppCompatActivity(), PostAdapter.OnItemClickListener {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_post)
 
         val repository = Repository()
         viewModelFactory = ViewModelFactory(repository)

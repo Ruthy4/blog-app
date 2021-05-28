@@ -24,10 +24,6 @@ class CommentViewModel(private val repository: Repository) : ViewModel() {
     //listen for changes in the addNewComment function
     fun postComment(position: Int, comment: CommentModel){
         _commentNew = repository.addNewComment(position, comment)
-
-
-
-
     }
 
 

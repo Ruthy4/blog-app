@@ -15,14 +15,15 @@ class MakeAPostActivity : AppCompatActivity() {
         //sends the new post to the main Activity
         post_button.setOnClickListener{
             val newPost = findViewById<EditText>(R.id.make_a_postET).text.toString()
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("newPost", newPost)
+            val intent = Intent(this, PostActivity::class.java)
+            intent.putExtra("newPost", newPost).flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(intent)
             finish()
         }
 
+        //On click listener to open the previous activity
         backIv.setOnClickListener{
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, PostActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
             finish()
         }
